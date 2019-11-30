@@ -1,0 +1,36 @@
+version: 2
+jobs:
+  build:
+    branches:
+      only:
+        - dev
+        - master
+        - /feature\/.*/
+        - /ci\/.*/
+        - /refactor\/.*/
+        - /fix\/.*/
+        - /test\/.*/
+        - /chore\/.*/
+        - /docs\/.*/
+        - /depfu\/.*/
+        - /feat\/.*/
+
+    docker:
+      - image: circleci/node:10.15.3
+
+    working_directory: ~/ninjagram
+
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - dependencies-cache-{{ checksum "package.json" }}
+            - dependencies-cache
+      - run:
+          name: Install dependencies
+          command: |
+            yarn
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-cache-{{ checksum "package.json" }}
